@@ -15,7 +15,8 @@
     "php": "^8.2||^8.3",
     "nette/php-generator": "v4.1.5",
     "laravel/framework": "^11.0",
-    "geardev/collector": "^0.0"
+    "geardev/collector": "^0.0",
+    "geardev/coroutines": "^0.0"
   },
   "extra": {
     "laravel": {
