@@ -8,7 +8,7 @@
   },
   "bin": [
     "bin/gear.php",
-    "bin/gear-dev-server.php",
+    "bin/gear-dev-server-arm64",
     "bin/gear-server.php"
   ],
   "require": {
