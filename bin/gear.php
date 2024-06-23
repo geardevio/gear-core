@@ -1,5 +1,6 @@
 <?php
 
+use GearDev\Core\ContextStorage\ContextStorage;
 use GearDev\Core\Starter\Ignition;
 use Symfony\Component\Console\Input\ArgvInput;
 
@@ -32,5 +33,7 @@ $status = $laravelApp
 |
 */
 
-sleep(1);
+while (!ContextStorage::getSystemChannel('log')->isEmpty()) {
+    sleep(1);
+}
 exit($status);

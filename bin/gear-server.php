@@ -1,5 +1,6 @@
 <?php
 
+use GearDev\Core\ContextStorage\ContextStorage;
 use GearDev\Core\Starter\Ignition;
 
 const IS_GEAR_SERVER = true;
@@ -23,9 +24,12 @@ echo 'Server started'."\n";
 
 $exitCode = $ignition->waitExitSignal();
 
-if (!getenv('GEAR_DEV_SERVER')) {
-    sleep(2);
+while (!ContextStorage::getSystemChannel('log')->isEmpty()) {
+    sleep(1);
 }
+//if (!getenv('GEAR_DEV_SERVER')) {
+//    sleep(2);
+//}
 
 echo 'Exited: ' . $exitCode . PHP_EOL;
 exit($exitCode);
