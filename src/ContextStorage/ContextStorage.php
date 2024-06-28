@@ -2,9 +2,10 @@
 
 namespace GearDev\Core\ContextStorage;
 
+use Exception;
 use GearDev\Coroutines\Co\CoManagerFactory;
 use GearDev\Coroutines\Interfaces\ChannelInterface;
-use Illuminate\Foundation\Application;
+use Psr\Container\ContainerInterface;
 
 
 class ContextStorage
@@ -13,34 +14,12 @@ class ContextStorage
         'systemChannels' => [],
         'containers' => [],
         'interStreamInstances' => [],
-        'maskoStrings' => [],
-        'logContext' => []
+        'maskoStrings' => []
     ];
 
     public static function setMaskoString(string $value, string $type = 'default')
     {
         self::$storage['maskoStrings'][$value] = $type;
-    }
-
-    public static function addLogContext($key, $value)
-    {
-        $coroutineId = CoManagerFactory::getCoroutineManager()->getCurrentCoroutineId();
-        self::$storage['logContext'][$coroutineId][$key] = $value;
-    }
-
-    public static function getLogContext()
-    {
-        $coroutineId = CoManagerFactory::getCoroutineManager()->getCurrentCoroutineId();
-        return self::$storage['logContext'][$coroutineId] ?? [];
-    }
-
-    public static function cloneLogContextFromFirstCoroutineToSecond(int $firstCoroutineId, int $secondCoroutineId)
-    {
-        if (!isset(self::$storage['logContext'][$firstCoroutineId])) {
-            self::$storage['logContext'][$secondCoroutineId] = [];
-            return;
-        }
-        self::$storage['logContext'][$secondCoroutineId] = self::$storage['logContext'][$firstCoroutineId];
     }
 
     public static function getMaskoStrings()
@@ -66,15 +45,20 @@ class ContextStorage
     public static function setSystemChannel(string $name, ChannelInterface $channel): void
     {
         if (array_key_exists($name, self::$storage['systemChannels'] ?? [])) {
-            throw new \Exception(sprintf('Channel with name %s already exists', $name));
+            throw new Exception(sprintf('Channel with name %s already exists', $name));
         }
         self::$storage['systemChannels'][$name] = $channel;
+    }
+
+    public static function ifSystemChannelExists(string $name): bool
+    {
+        return array_key_exists($name, self::$storage['systemChannels'] ?? []);
     }
 
     public static function getSystemChannel(string $name): ChannelInterface
     {
         if (!array_key_exists($name, self::$storage['systemChannels'] ?? [])) {
-            throw new \Exception(sprintf('Channel with name %s does not exist', $name));
+            throw new Exception(sprintf('Channel with name %s does not exist', $name));
         }
         return self::$storage['systemChannels'][$name];
     }
@@ -103,14 +87,13 @@ class ContextStorage
         unset(self::$storage[$coroutineId]);
         unset(self::$storage['containers'][$coroutineId]);
         unset(self::$storage['routineNames'][$coroutineId]);
-        unset(self::$storage['logContext'][$coroutineId]);
     }
 
-    public static function setApplication(\Illuminate\Contracts\Container\Container|Application $application, int $coroutineId = null): void
+    public static function setApplication(ContainerInterface $application, int $coroutineId = null): void
     {
         $coroutineId = $coroutineId ?? CoManagerFactory::getCoroutineManager()->getCurrentCoroutineId();
         if (!self::getCurrentRoutineName()) {
-            throw new \Exception('Routine name is not set');
+            throw new Exception('Routine name is not set');
         }
         self::$storage['routineNames'][$coroutineId] = self::getCurrentRoutineName();
         self::$storage['containers'][$coroutineId] = $application;
@@ -128,16 +111,16 @@ class ContextStorage
         return self::$storage['routineNames'][$coroutineId] ?? null;
     }
 
-    public static function getMainApplication(): ?Application
+    public static function getMainApplication(): ?ContainerInterface
     {
         $coroutineId = CoManagerFactory::getCoroutineManager()->getCurrentCoroutineId();
-        if (!isset(self::$storage['containers'][$coroutineId])) throw new \Exception('Main application not found');
+        if (!isset(self::$storage['containers'][$coroutineId])) throw new Exception('Main application not found');
         $mainApp = self::$storage['containers'][$coroutineId];
-        if (!$mainApp) throw new \Exception('Main application not found');
+        if (!$mainApp) throw new Exception('Main application not found');
         return $mainApp;
     }
 
-    public static function getApplication(): ?Application
+    public static function getApplication(): ?ContainerInterface
     {
         $coroutineId = CoManagerFactory::getCoroutineManager()->getCurrentCoroutineId();
         return self::$storage['containers'][$coroutineId] ?? null;

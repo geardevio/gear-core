@@ -4,27 +4,26 @@ namespace GearDev\Core\Attributes;
 
 use GearDev\Collector\Collector\AttributeInterface;
 use GearDev\Core\Warmers\WarmerInterface;
-use Illuminate\Foundation\Application;
 
 #[\Attribute(\Attribute::TARGET_CLASS)]
 class Warmer implements AttributeInterface
 {
-    public function onClass(Application $app, string $className, AttributeInterface $attribute): void
+    public function onClass(string $className, AttributeInterface $attribute): void
     {
-        $instance = $app->make($className);
+        $instance = new $className;
         if (!is_a($instance, WarmerInterface::class)) {
             throw new \Exception('Class ' . $className . ' must implement ' . WarmerInterface::class);
         }
-        $instance->warm($app);
+        $instance->warm();
         unset($instance);
     }
 
-    public function onMethod(Application $app, string $className, string $methodName, AttributeInterface $attribute): void
+    public function onMethod(string $className, string $methodName, AttributeInterface $attribute): void
     {
         return;
     }
 
-    public function onProperty(Application $app, string $className, string $propertyName, AttributeInterface $attribute): void
+    public function onProperty(string $className, string $propertyName, AttributeInterface $attribute): void
     {
         return;
     }

@@ -3,14 +3,16 @@
 namespace Illuminate\Container;
 
 
-use GearDev\Collector\ContextStorage\ContextStorage;
+
 use ArrayAccess;
 use Closure;
 use Exception;
+use GearDev\Core\ContextStorage\ContextStorage;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Container\CircularDependencyException;
 use Illuminate\Contracts\Container\Container as ContainerContract;
 use LogicException;
+use Psr\Container\ContainerInterface;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionFunction;
@@ -1405,7 +1407,7 @@ class Container implements ArrayAccess, ContainerContract
     /**
      * Get the globally available instance of the container.
      *
-     * @return static
+     * @return static|ContainerInterface
      */
     public static function getInstance()
     {
@@ -1420,7 +1422,7 @@ class Container implements ArrayAccess, ContainerContract
      * Set the shared instance of the container.
      *
      * @param  \Illuminate\Contracts\Container\Container|null  $container
-     * @return \Illuminate\Contracts\Container\Container|static
+     * @return \Illuminate\Contracts\Container\Container|static|ContainerInterface
      */
     public static function setInstance(ContainerContract $container = null)
     {

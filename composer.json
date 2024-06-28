@@ -6,24 +6,10 @@
       "GearDev\\Core\\": "src/"
     }
   },
-  "bin": [
-    "bin/gear.php",
-    "bin/gear-dev-server-arm64",
-    "bin/gear-server.php"
-  ],
   "require": {
     "php": "^8.2||^8.3",
-    "nette/php-generator": "v4.1.5",
-    "laravel/framework": "^11.0",
-    "geardev/collector": "^0.0",
-    "geardev/coroutines": "^0.0",
-    "geardev/swow": "^0.0"
-  },
-  "extra": {
-    "laravel": {
-      "providers": [
-        "GearDev\\Core\\GearCoreLaravelProvider"
-      ]
-    }
+    "geardev/collector": "^0.1",
+    "geardev/coroutines": "*",
+    "psr/container": "^2.0"
   }
 }
