@@ -93,7 +93,7 @@ class ContextStorage
     {
         $coroutineId = $coroutineId ?? CoManagerFactory::getCoroutineManager()->getCurrentCoroutineId();
         if (!self::getCurrentRoutineName()) {
-            throw new Exception('Routine name is not set');
+            self::setCurrentRoutineName('undefined-routine-'. uniqid());
         }
         self::$storage['routineNames'][$coroutineId] = self::getCurrentRoutineName();
         self::$storage['containers'][$coroutineId] = $application;
